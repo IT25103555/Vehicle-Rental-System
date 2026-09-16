@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Rental.lk — Admin Dashboard</title>
+<style>
+  :root { --navy:#161b33; --gold:#f0a500; --bg:#f4f5f7; --danger:#c0392b; --ok:#2e7d32; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, -apple-system, Segoe UI, sans-serif; background: var(--bg); color:#222; }
+
+  /* ---- Login screen ---- */
+  #loginScreen { min-height:100vh; display:flex; align-items:center; justify-content:center; }
+  #loginBox { background:#fff; padding:36px; border-radius:12px; width:360px; box-shadow:0 4px 24px rgba(0,0,0,.08); }
+  #loginBox h1 { margin:0 0 4px; font-size:22px; }
+  #loginBox p { margin:0 0 20px; color:#666; font-size:14px; }
+  #loginBox input { width:100%; padding:11px; margin:6px 0; border:1px solid #ddd; border-radius:8px; font-size:14px; }
+  #loginBox button { width:100%; padding:12px; margin-top:10px; background:var(--navy); color:#fff; border:none; border-radius:8px; font-size:15px; cursor:pointer; }
+  #loginError { color:var(--danger); font-size:13px; display:none; margin-top:8px; }
+
+  /* ---- App shell ---- */
+  #app { display:none; min-height:100vh; }
+  #sidebar { width:220px; background:var(--navy); color:#fff; padding:22px 0; flex-shrink:0; }
+  #sidebar h2 { padding:0 20px; font-size:18px; margin:0 0 24px; }
+  #sidebar h2 span { color:var(--gold); }
+  #sidebar button { display:block; width:100%; text-align:left; background:none; border:none; color:#cfd2e0; padding:12px 20px; font-size:14px; cursor:pointer; }
+  #sidebar button.active { background:rgba(255,255,255,.08); color:#fff; border-left:3px solid var(--gold); }
+  #sidebar button:hover { color:#fff; }
+  #main { flex:1; padding:28px 32px; overflow-x:auto; }
+  #main h1 { margin-top:0; font-size:24px; }
+  .flex-row { display:flex; }
+
+  /* ---- Cards / tables ---- */
+  .cards { display:grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap:14px; margin-bottom:24px; }
+  .card { background:#fff; border-radius:10px; padding:16px; box-shadow:0 1px 6px rgba(0,0,0,.06); }
+  .card b { display:block; font-size:24px; }
+  .card span { font-size:13px; color:#777; }
+
+  table { width:100%; border-collapse: collapse; background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 1px 6px rgba(0,0,0,.06); }
+  th, td { padding:10px 12px; text-align:left; font-size:13px; border-bottom:1px solid #eee; white-space:nowrap; }
+  th { background:#fafafa; color:#555; }
+  .btn { padding:6px 12px; border:none; border-radius:6px; font-size:12px; cursor:pointer; margin-right:4px; }
+  .btn-primary { background:var(--navy); color:#fff; }
+  .btn-gold { background:var(--gold); color:#222; }
+  .btn-danger { background:var(--danger); color:#fff; }
+  .btn-ok { background:var(--ok); color:#fff; }
+  .badge { padding:3px 8px; border-radius:20px; font-size:11px; font-weight:600; }
+  .badge-available, .badge-active, .badge-Completed, .badge-Confirmed { background:#e3f5e6; color:#1e7a34; }
+  .badge-Pending, .badge-suspended, .badge-Cancelled { background:#fdecea; color:#c0392b; }
+  .badge-Ongoing, .badge-Reserved { background:#fff4e0; color:#9a6b00; }
+
+  /* ---- Add/Edit vehicle form ---- */
+  #vehicleForm { background:#fff; padding:18px; border-radius:10px; margin-bottom:18px; display:none; }
+  #vehicleForm input, #vehicleForm select { padding:8px; margin:4px 6px 4px 0; border:1px solid #ddd; border-radius:6px; font-size:13px; }
+  .toolbar { margin-bottom:14px; display:flex; gap:10px; align-items:center; }
+  .toolbar input[type=text] { padding:8px; border:1px solid #ddd; border-radius:6px; }
+  pre.report-out { background:#fff; padding:14px; border-radius:10px; font-size:12px; overflow:auto; max-height:60vh; }
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN ===== -->
+<div id="loginScreen">
+  <div id="loginBox">
+    <h1>Rental.lk <span style="color:#f0a500">Admin</span></h1>
+    <p>Sign in with an admin account.</p>
+    <input id="loginEmail" type="email" placeholder="Admin email">
+    <input id="loginPassword" type="password" placeholder="Password">
+    <button id="loginBtn">Login</button>
+    <p id="loginError"></p>
+  </div>
+</div>
+
+<!-- ===== APP ===== -->
+<div id="app" class="flex-row">
+  <div id="sidebar">
+    <h2>Rental<span>.lk</span> Admin</h2>
+    <button data-view="dashboard" class="active">Dashboard</button>
+    <button data-view="vehicles">Vehicles</button>
+    <button data-view="bookings">Bookings</button>
+    <button data-view="users">Users</button>
+    <button data-view="reviews">Reviews</button>
+    <button data-view="ai-insights">AI Insights</button>
+    <button data-view="reports">Reports</button>
+    <button id="logoutBtn" style="margin-top:30px;color:#ff8a80;">Logout</button>
+  </div>
+
+  <div id="main">
+    <!-- Dashboard -->
+    <section id="view-dashboard">
+      <h1>Dashboard</h1>
+      <div class="cards" id="dashboardCards"><p>Loading...</p></div>
+    </section>
+
+    <!-- Vehicles -->
+    <section id="view-vehicles" style="display:none;">
+      <h1>Vehicles</h1>
+      <div class="toolbar">
+        <button class="btn btn-gold" id="showAddVehicle">+ Add Vehicle</button>
+      </div>
+      <div id="vehicleForm">
+        <h3 id="vehicleFormTitle">Add Vehicle</h3>
+        <input type="hidden" id="vf_id">
+        <input id="vf_name" type="text" placeholder="Name (e.g. Toyota Axio)">
+        <input id="vf_registrationNo" type="text" placeholder="Registration No">
+        <select id="vf_category">
+          <option>Car</option><option>Van</option><option>SUV</option>
+          <option>Bike</option><option>Lorry</option><option>Bus</option>
+        </select>
+        <input id="vf_brand" type="text" placeholder="Brand">
+        <input id="vf_model" type="text" placeholder="Model">
+        <input id="vf_year" type="number" placeholder="Year">
+        <select id="vf_fuelType">
+          <option>Petrol</option><option>Diesel</option><option>Hybrid</option><option>Electric</option>
+        </select>
+        <select id="vf_transmission">
+          <option>Manual</option><option>Automatic</option>
+        </select>
+        <input id="vf_seats" type="number" placeholder="Seats">
+        <input id="vf_rentalRatePerDay" type="number" placeholder="Rate per day (LKR)">
+        <input id="vf_location" type="text" placeholder="Location">
+        <br>
+        <button class="btn btn-primary" id="saveVehicleBtn">Save</button>
+        <button class="btn" id="cancelVehicleBtn">Cancel</button>
+        <p id="vehicleFormError" style="color:#c0392b;font-size:13px;"></p>
+      </div>
+      <table>
+        <thead><tr><th>Name</th><th>Category</th><th>Brand</th><th>Rate/day</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="vehiclesTableBody"><tr><td colspan="6">Loading...</td></tr></tbody>
+      </table>
+    </section>
+
+    <!-- Bookings -->
+    <section id="view-bookings" style="display:none;">
+      <h1>Bookings</h1>
+      <table>
+        <thead><tr><th>Customer</th><th>Vehicle</th><th>Start</th><th>End</th><th>Cost</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="bookingsTableBody"><tr><td colspan="7">Loading...</td></tr></tbody>
+      </table>
+    </section>
+
+    <!-- Users -->
+    <section id="view-users" style="display:none;">
+      <h1>Users</h1>
+      <table>
+        <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="usersTableBody"><tr><td colspan="5">Loading...</td></tr></tbody>
+      </table>
+    </section>
+
+    <!-- Reviews (Requirement 7: "Manage customer feedback and reviews") -->
+    <section id="view-reviews" style="display:none;">
+      <h1>Customer Feedback &amp; Reviews</h1>
+      <div class="toolbar">
+        <select id="reviewRatingFilter">
+          <option value="">All ratings</option>
+          <option value="1">1 star</option>
+          <option value="2">2 stars</option>
+          <option value="3">3 stars</option>
+          <option value="4">4 stars</option>
+          <option value="5">5 stars</option>
+        </select>
+        <button class="btn btn-primary" id="applyReviewFilter">Filter</button>
+      </div>
+      <table>
+        <thead><tr><th>Vehicle</th><th>Customer</th><th>Rating</th><th>Comment</th><th>Date</th><th>Actions</th></tr></thead>
+        <tbody id="reviewsTableBody"><tr><td colspan="6">Loading...</td></tr></tbody>
+      </table>
+    </section>
+
+    <!-- AI Insights (Requirement 7: "Monitor AI-generated insights") -->
+    <section id="view-ai-insights" style="display:none;">
+      <h1>AI-Generated Insights</h1>
+      <p style="color:#666;font-size:13.5px;margin-top:-8px;">
+        Demand forecast and model comparison from the AI pipeline
+        (Node → Java <code>AI_Recommendation</code> service → Python <code>ai-service</code>).
+        If the Java/Python services aren't running, this falls back to the rule-based baseline.
+      </p>
+      <div class="toolbar">
+        <select id="aiCategoryFilter">
+          <option value="">All categories</option>
+          <option value="Car">Car</option>
+          <option value="Van">Van</option>
+          <option value="SUV">SUV</option>
+          <option value="Bike">Bike</option>
+          <option value="Lorry">Lorry</option>
+          <option value="Bus">Bus</option>
+        </select>
+        <button class="btn btn-primary" id="loadDemandBtn">Get Demand Forecast</button>
+      </div>
+      <div class="cards" id="aiDemandCards"><p style="color:#999;">Pick a category (or leave blank for all) and click "Get Demand Forecast".</p></div>
+
+      <h1 style="margin-top:30px;">ML Model Comparison</h1>
+      <div class="cards" id="aiModelComparisonCards"><p>Loading...</p></div>
+    </section>
+
+    <!-- Reports -->
+    <section id="view-reports" style="display:none;">
+      <h1>Reports</h1>
+      <div class="toolbar">
+        <button class="btn btn-primary" data-report="revenue">Revenue</button>
+        <button class="btn btn-primary" data-report="bookings">Bookings</button>
+        <button class="btn btn-primary" data-report="vehicle-usage">Vehicle Usage</button>
+        <button class="btn btn-primary" data-report="customer-activity">Customer Activity</button>
+      </div>
+      <pre class="report-out" id="reportOutput">Pick a report above.</pre>
+    </section>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   Backend integration - change if the Node backend runs elsewhere.
+   ========================================================= */
+const API_BASE = 'http://localhost:5000/api';
+
+function getAdminToken() { return localStorage.getItem('adminToken'); }
+function setAdminSession(token, user) {
+  localStorage.setItem('adminToken', token);
+  localStorage.setItem('adminUser', JSON.stringify(user));
+}
+function clearAdminSession() {
+  localStorage.removeItem('adminToken');
+  localStorage.removeItem('adminUser');
+}
+
+async function api(path, options = {}) {
+  const headers = Object.assign({ 'Content-Type': 'application/json' }, options.headers || {});
+  const token = getAdminToken();
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.message || `Request failed (${res.status})`);
+  return data;
+}
+
+/* ---------- Login ---------- */
+document.getElementById('loginBtn').addEventListener('click', async () => {
+  const errEl = document.getElementById('loginError');
+  errEl.style.display = 'none';
+  try {
+    const data = await api('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({
+        email: document.getElementById('loginEmail').value,
+        password: document.getElementById('loginPassword').value
+      })
+    });
+    if (data.user.role !== 'admin') {
+      throw new Error('This account is not an admin. Promote it in MongoDB Compass first (role: "admin").');
+    }
+    setAdminSession(data.token, data.user);
+    showApp();
+  } catch (err) {
+    errEl.textContent = err.message;
+    errEl.style.display = 'block';
+  }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  clearAdminSession();
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+});
+
+function showApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  switchView('dashboard');
+}
+
+/* ---------- Sidebar navigation ---------- */
+document.querySelectorAll('#sidebar button[data-view]').forEach(btn => {
+  btn.addEventListener('click', () => switchView(btn.dataset.view));
+});
+
+function switchView(view) {
+  document.querySelectorAll('#sidebar button[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+  ['dashboard', 'vehicles', 'bookings', 'users', 'reviews', 'ai-insights', 'reports'].forEach(v => {
+    document.getElementById('view-' + v).style.display = (v === view) ? '' : 'none';
+  });
+  if (view === 'dashboard') loadDashboard();
+  if (view === 'vehicles') loadVehicles();
+  if (view === 'bookings') loadBookings();
+  if (view === 'users') loadUsers();
+  if (view === 'reviews') loadReviews();
+  if (view === 'ai-insights') loadModelComparison();
+}
+
+/* ---------- Dashboard ---------- */
+async function loadDashboard() {
+  const el = document.getElementById('dashboardCards');
+  try {
+    const { data } = await api('/reports/dashboard');
+    el.innerHTML = `
+      <div class="card"><b>${data.totalCustomers}</b><span>Customers</span></div>
+      <div class="card"><b>${data.totalVehicles}</b><span>Total Vehicles</span></div>
+      <div class="card"><b>${data.availableVehicles}</b><span>Available Now</span></div>
+      <div class="card"><b>${data.activeBookings}</b><span>Active Bookings</span></div>
+      <div class="card"><b>${data.pendingBookings}</b><span>Pending Approval</span></div>
+      <div class="card"><b>LKR ${data.totalRevenue.toLocaleString()}</b><span>Total Revenue</span></div>
+    `;
+  } catch (err) {
+    el.innerHTML = `<p style="color:#c0392b;">${err.message}</p>`;
+  }
+}
+
+/* ---------- Vehicles ---------- */
+async function loadVehicles() {
+  const tbody = document.getElementById('vehiclesTableBody');
+  try {
+    const { data } = await api('/vehicles?limit=100');
+    if (!data || data.length === 0) { tbody.innerHTML = '<tr><td colspan="6">No vehicles yet.</td></tr>'; return; }
+    tbody.innerHTML = data.map(v => `
+      <tr>
+        <td>${v.name}</td>
+        <td>${v.category}</td>
+        <td>${v.brand}</td>
+        <td>LKR ${v.rentalRatePerDay}</td>
+        <td><span class="badge badge-${v.status.replace(/\s/g,'')}">${v.status}</span></td>
+        <td>
+          <button class="btn btn-primary" onclick='editVehicle(${JSON.stringify(v)})'>Edit</button>
+          <button class="btn btn-danger" onclick="deleteVehicle('${v._id}')">Delete</button>
+        </td>
+      </tr>
+    `).join('');
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="6" style="color:#c0392b;">${err.message}</td></tr>`;
+  }
+}
+
+document.getElementById('showAddVehicle').addEventListener('click', () => {
+  document.getElementById('vf_id').value = '';
+  document.getElementById('vehicleFormTitle').textContent = 'Add Vehicle';
+  ['name','registrationNo','brand','model','year','seats','rentalRatePerDay','location'].forEach(f => document.getElementById('vf_' + f).value = '');
+  document.getElementById('vehicleForm').style.display = 'block';
+});
+document.getElementById('cancelVehicleBtn').addEventListener('click', () => {
+  document.getElementById('vehicleForm').style.display = 'none';
+});
+
+function editVehicle(v) {
+  document.getElementById('vf_id').value = v._id;
+  document.getElementById('vehicleFormTitle').textContent = 'Edit Vehicle';
+  document.getElementById('vf_name').value = v.name || '';
+  document.getElementById('vf_registrationNo').value = v.registrationNo || '';
+  document.getElementById('vf_category').value = v.category || 'Car';
+  document.getElementById('vf_brand').value = v.brand || '';
+  document.getElementById('vf_model').value = v.model || '';
+  document.getElementById('vf_year').value = v.year || '';
+  document.getElementById('vf_fuelType').value = v.fuelType || 'Petrol';
+  document.getElementById('vf_transmission').value = v.transmission || 'Manual';
+  document.getElementById('vf_seats').value = v.seats || '';
+  document.getElementById('vf_rentalRatePerDay').value = v.rentalRatePerDay || '';
+  document.getElementById('vf_location').value = v.location || '';
+  document.getElementById('vehicleForm').style.display = 'block';
+}
+
+document.getElementById('saveVehicleBtn').addEventListener('click', async () => {
+  const errEl = document.getElementById('vehicleFormError');
+  errEl.textContent = '';
+  const id = document.getElementById('vf_id').value;
+  const payload = {
+    name: document.getElementById('vf_name').value,
+    registrationNo: document.getElementById('vf_registrationNo').value,
+    category: document.getElementById('vf_category').value,
+    brand: document.getElementById('vf_brand').value,
+    model: document.getElementById('vf_model').value,
+    year: Number(document.getElementById('vf_year').value) || undefined,
+    fuelType: document.getElementById('vf_fuelType').value,
+    transmission: document.getElementById('vf_transmission').value,
+    seats: Number(document.getElementById('vf_seats').value) || undefined,
+    rentalRatePerDay: Number(document.getElementById('vf_rentalRatePerDay').value),
+    location: document.getElementById('vf_location').value
+  };
+  try {
+    if (id) {
+      await api(`/vehicles/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
+    } else {
+      await api('/vehicles', { method: 'POST', body: JSON.stringify(payload) });
+    }
+    document.getElementById('vehicleForm').style.display = 'none';
+    loadVehicles();
+  } catch (err) {
+    errEl.textContent = err.message;
+  }
+});
+
+async function deleteVehicle(id) {
+  if (!confirm('Delete this vehicle?')) return;
+  try {
+    await api(`/vehicles/${id}`, { method: 'DELETE' });
+    loadVehicles();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+/* ---------- Bookings ---------- */
+async function loadBookings() {
+  const tbody = document.getElementById('bookingsTableBody');
+  try {
+    const { data } = await api('/bookings?limit=100');
+    if (!data || data.length === 0) { tbody.innerHTML = '<tr><td colspan="7">No bookings yet.</td></tr>'; return; }
+    tbody.innerHTML = data.map(b => `
+      <tr>
+        <td>${b.customer ? b.customer.name : '—'}</td>
+        <td>${b.vehicle ? b.vehicle.name : '—'}</td>
+        <td>${new Date(b.startDate).toLocaleDateString()}</td>
+        <td>${new Date(b.endDate).toLocaleDateString()}</td>
+        <td>LKR ${b.estimatedCost}</td>
+        <td><span class="badge badge-${b.status}">${b.status}</span></td>
+        <td>
+          ${b.status === 'Pending' ? `<button class="btn btn-ok" onclick="approveBooking('${b._id}')">Approve</button>` : ''}
+          ${(b.status === 'Confirmed' || b.status === 'Ongoing') ? `<button class="btn btn-primary" onclick="completeBooking('${b._id}')">Complete</button>` : ''}
+        </td>
+      </tr>
+    `).join('');
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="7" style="color:#c0392b;">${err.message}</td></tr>`;
+  }
+}
+
+async function approveBooking(id) {
+  try { await api(`/bookings/${id}/approve`, { method: 'PATCH' }); loadBookings(); }
+  catch (err) { alert(err.message); }
+}
+async function completeBooking(id) {
+  try { await api(`/bookings/${id}/complete`, { method: 'PATCH', body: JSON.stringify({ extraCharges: [] }) }); loadBookings(); }
+  catch (err) { alert(err.message); }
+}
+
+/* ---------- Users ---------- */
+async function loadUsers() {
+  const tbody = document.getElementById('usersTableBody');
+  try {
+    const { data } = await api('/admin/users?limit=100');
+    if (!data || data.length === 0) { tbody.innerHTML = '<tr><td colspan="5">No users yet.</td></tr>'; return; }
+    tbody.innerHTML = data.map(u => `
+      <tr>
+        <td>${u.name}</td>
+        <td>${u.email}</td>
+        <td>${u.role}</td>
+        <td><span class="badge badge-${u.status}">${u.status}</span></td>
+        <td>
+          ${u.status === 'active'
+            ? `<button class="btn btn-danger" onclick="setUserStatus('${u._id}','suspended')">Suspend</button>`
+            : `<button class="btn btn-ok" onclick="setUserStatus('${u._id}','active')">Activate</button>`}
+        </td>
+      </tr>
+    `).join('');
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="5" style="color:#c0392b;">${err.message}</td></tr>`;
+  }
+}
+
+async function setUserStatus(id, status) {
+  try { await api(`/admin/users/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }); loadUsers(); }
+  catch (err) { alert(err.message); }
+}
+
+/* ---------- Reviews (Requirement 7: "Manage customer feedback and reviews") ---------- */
+async function loadReviews() {
+  const tbody = document.getElementById('reviewsTableBody');
+  tbody.innerHTML = '<tr><td colspan="6">Loading...</td></tr>';
+  const rating = document.getElementById('reviewRatingFilter').value;
+  const qs = rating ? `?minRating=${rating}&maxRating=${rating}` : '';
+  try {
+    const { data } = await api(`/reviews${qs}`);
+    if (!data || data.length === 0) { tbody.innerHTML = '<tr><td colspan="6">No reviews yet.</td></tr>'; return; }
+    tbody.innerHTML = data.map(r => `
+      <tr>
+        <td>${r.vehicle ? r.vehicle.name : '—'}</td>
+        <td>${r.customer ? r.customer.name : '—'}</td>
+        <td>${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</td>
+        <td style="white-space:normal;max-width:280px;">${r.comment || '<span style="color:#999;">No comment</span>'}</td>
+        <td>${new Date(r.createdAt).toLocaleDateString()}</td>
+        <td><button class="btn btn-danger" onclick="deleteReview('${r._id}')">Remove</button></td>
+      </tr>
+    `).join('');
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="6" style="color:#c0392b;">${err.message}</td></tr>`;
+  }
+}
+
+async function deleteReview(id) {
+  if (!confirm('Remove this review? This cannot be undone.')) return;
+  try { await api(`/reviews/${id}`, { method: 'DELETE' }); loadReviews(); }
+  catch (err) { alert(err.message); }
+}
+
+document.getElementById('applyReviewFilter').addEventListener('click', loadReviews);
+
+/* ---------- AI Insights (Requirement 7: "Monitor AI-generated insights") ---------- */
+async function loadDemandForecast() {
+  const el = document.getElementById('aiDemandCards');
+  el.innerHTML = '<p>Loading forecast...</p>';
+  const category = document.getElementById('aiCategoryFilter').value;
+  const qs = category ? `?category=${encodeURIComponent(category)}` : '';
+  try {
+    const data = await api(`/ai/predict-demand${qs}`);
+    const confidenceColor = data.confidence === 'low' ? 'var(--danger)' : (data.confidence === 'medium' ? '#9a6b00' : 'var(--ok)');
+    el.innerHTML = `
+      <div class="card"><b>${data.predictedNextMonthBookings}</b><span>Predicted bookings next month${category ? ' — ' + category : ''}</span></div>
+      <div class="card"><b style="color:${confidenceColor};text-transform:capitalize;">${data.confidence}</b><span>Confidence</span></div>
+      ${data.trainedModelPrediction
+        ? `<div class="card"><b>Available</b><span>Trained model (Java/Python pipeline)</span></div>`
+        : `<div class="card"><b style="color:#9a6b00;">Fallback</b><span>Trained model unreachable — using moving-average baseline</span></div>`}
+    `;
+    if (data.message) el.innerHTML += `<p style="grid-column:1/-1;color:#999;font-size:13px;">${data.message}</p>`;
+  } catch (err) {
+    el.innerHTML = `<p style="color:#c0392b;">${err.message}</p>`;
+  }
+}
+document.getElementById('loadDemandBtn').addEventListener('click', loadDemandForecast);
+
+async function loadModelComparison() {
+  const el = document.getElementById('aiModelComparisonCards');
+  el.innerHTML = '<p>Loading...</p>';
+  try {
+    const data = await api('/ai/model-comparison');
+
+    if (data.source === 'placeholder') {
+      el.innerHTML = `<p style="grid-column:1/-1;color:#9a6b00;">${data.note}</p>`;
+      return;
+    }
+
+    // Real shape from train.py: { tasks: [ { task, models: [...], bestModel, warning? }, ... ] }
+    if (Array.isArray(data.tasks)) {
+      el.innerHTML = data.tasks.map(t => `
+        <div style="grid-column:1/-1;margin-bottom:6px;">
+          <h3 style="font-size:15px;margin:14px 0 8px;">${t.task} <span style="font-weight:400;color:#999;font-size:12px;">(${t.trainingRows} training rows${t.syntheticRows ? `, ${t.syntheticRows} synthetic` : ''})</span></h3>
+          <div class="cards">
+            ${t.models.map(m => `
+              <div class="card" style="${m.status === 'selected' ? 'border:2px solid var(--gold);' : ''}">
+                <b>${m.accuracy != null ? (m.accuracy * 100).toFixed(1) + '%' : '—'}</b>
+                <span>${m.name}${m.rmse != null ? ' · RMSE ' + m.rmse : ''}</span>
+                <span style="display:block;margin-top:4px;color:${m.status === 'selected' ? 'var(--ok)' : '#777'};font-weight:600;text-transform:capitalize;">${m.status === 'selected' ? '★ Selected' : 'Compared'}</span>
+              </div>
+            `).join('')}
+          </div>
+          ${t.warning ? `<p style="color:#9a6b00;font-size:12px;margin-top:4px;">⚠ ${t.warning}</p>` : ''}
+        </div>
+      `).join('');
+    } else {
+      el.innerHTML = '<p style="color:#999;">No comparison data available.</p>';
+    }
+  } catch (err) {
+    el.innerHTML = `<p style="color:#c0392b;">${err.message}</p>`;
+  }
+}
+
+/* ---------- Reports ---------- */
+document.querySelectorAll('button[data-report]').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const out = document.getElementById('reportOutput');
+    out.textContent = 'Loading...';
+    try {
+      const data = await api(`/reports/${btn.dataset.report}`);
+      out.textContent = JSON.stringify(data, null, 2);
+    } catch (err) {
+      out.textContent = 'Error: ' + err.message;
+    }
+  });
+});
+
+/* ---------- Init: stay logged in across refreshes ---------- */
+if (getAdminToken()) { showApp(); }
+</script>
+</body>
+</html>

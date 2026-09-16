@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rental.lk — Vechile Rental Service in Sri Lanka</title>
+<style>
+  :root{
+    --ink:#171a1f;
+    --ink-soft:#4b5261;
+    --paper:#ffffff;
+    --paper-tint:#f6f7f9;
+    --line:#e7e9ed;
+    --brand:#f2b705;
+    --brand-deep:#c98f00;
+    --accent:#1c2b4a;
+    --accent-soft:#eef1f8;
+    --radius:14px;
+    --ease:cubic-bezier(.4,0,.2,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    color:var(--ink);
+    background:var(--paper);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{text-decoration:none;color:inherit;}
+  ul{list-style:none;}
+  img{max-width:100%;display:block;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
+  h1,h2,h3{font-family:"Inter",sans-serif;letter-spacing:-0.02em;line-height:1.1;}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;}
+
+  /* ---- Buttons ---- */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:14px 26px;border-radius:999px;font-weight:600;font-size:15px;
+    transition:transform .25s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease);
+  }
+  .btn-primary{background:var(--brand);color:var(--ink);}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(242,183,5,.35);}
+  .btn-outline{border:1.5px solid rgba(255,255,255,.55);color:#fff;}
+  .btn-outline:hover{background:rgba(255,255,255,.12);transform:translateY(-2px);}
+  .btn-dark{background:var(--accent);color:#fff;}
+  .btn-dark:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(28,43,74,.35);}
+
+  /* ---- Header ---- */
+  header{
+    position:sticky;top:0;z-index:100;
+    background:rgba(255,255,255,.97);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{display:flex;align-items:center;justify-content:space-between;height:78px;}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;}
+  .logo span{color:var(--brand-deep);}
+  .navlinks{display:flex;align-items:center;gap:30px;font-size:14.5px;font-weight:600;color:var(--ink-soft);}
+  .navlinks li{position:relative;}
+  .navlinks a{transition:color .2s var(--ease);}
+  .navlinks a:hover{color:var(--ink);}
+  .has-menu > a::after{content:"▾";font-size:10px;margin-left:5px;opacity:.6;}
+  .dropdown{
+    position:absolute;top:calc(100% + 14px);left:50%;transform:translateX(-50%) translateY(6px);
+    background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 20px 40px rgba(20,20,30,.1);
+    padding:10px;min-width:220px;opacity:0;visibility:hidden;
+    transition:opacity .22s var(--ease), transform .22s var(--ease), visibility .22s;
+  }
+  .has-menu:hover .dropdown{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0);}
+  .dropdown a{display:block;padding:9px 12px;border-radius:8px;font-weight:500;color:var(--ink);}
+  .dropdown a:hover{background:var(--paper-tint);}
+  .navcta{display:flex;align-items:center;gap:16px;}
+  .navcta .phone{font-weight:700;font-size:14.5px;}
+  .navcta .phone::before{content:"☎ ";}
+
+  /* ---- Hero ---- */
+  .hero{
+    position:relative;overflow:hidden;
+    background:linear-gradient(120deg,var(--accent) 0%, #10182e 100%);
+    color:#fff;padding:110px 0 130px;
+  }
+  .hero::after{
+    content:"";position:absolute;right:-120px;top:-120px;width:520px;height:520px;
+    background:radial-gradient(circle,rgba(242,183,5,.18),transparent 70%);
+  }
+  .hero-inner{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:60px;align-items:center;}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--brand);margin-bottom:18px;}
+  .eyebrow::before{content:"";width:26px;height:2px;background:var(--brand);display:inline-block;}
+  .hero h1{font-size:52px;font-weight:800;margin-bottom:20px;}
+  .hero h1 em{font-style:normal;color:var(--brand);}
+  .hero p{font-size:17px;color:#cfd5e6;max-width:480px;margin-bottom:34px;}
+  .hero-actions{display:flex;gap:14px;flex-wrap:wrap;}
+  .hero-art{
+    position:relative;border-radius:20px;overflow:hidden;aspect-ratio:4/3;
+    background:linear-gradient(160deg,#26314f,#0e1526);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .hero-art svg{width:62%;}
+  .hero-stats{
+    position:absolute;bottom:18px;left:18px;right:18px;
+    background:rgba(255,255,255,.08);backdrop-filter:blur(6px);
+    border:1px solid rgba(255,255,255,.15);border-radius:12px;
+    padding:14px 18px;display:flex;justify-content:space-between;
+  }
+  .hero-stats div{text-align:center;}
+  .hero-stats b{display:block;font-size:18px;color:var(--brand);}
+  .hero-stats span{font-size:11.5px;color:#c6cbdc;}
+
+  /* ---- Section shell ---- */
+  section{padding:96px 0;}
+  .section-head{max-width:620px;margin-bottom:52px;}
+  .section-head .tag{font-size:13px;font-weight:700;color:var(--brand-deep);margin-bottom:10px;display:block;}
+  .section-head h2{font-size:34px;font-weight:800;margin-bottom:14px;}
+  .section-head p{color:var(--ink-soft);font-size:15.5px;}
+  .section-head.center{margin-left:auto;margin-right:auto;text-align:center;}
+
+  /* ---- Features ---- */
+  .features{background:var(--paper-tint);}
+  .feature-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;}
+  .feature-card{
+    background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:30px 26px;
+    transition:transform .3s var(--ease), box-shadow .3s var(--ease), border-color .3s var(--ease);
+  }
+  .feature-card:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(20,20,30,.08);border-color:transparent;}
+  .feature-num{font-size:13px;font-weight:800;color:var(--brand-deep);margin-bottom:16px;}
+  .feature-card h3{font-size:17px;font-weight:700;margin-bottom:8px;}
+  .feature-card p{font-size:14px;color:var(--ink-soft);}
+
+  /* ---- Services ---- */
+  .service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;}
+  .service-card{
+    border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+    transition:transform .3s var(--ease), box-shadow .3s var(--ease);
+  }
+  .service-card:hover{transform:translateY(-6px);box-shadow:0 24px 44px rgba(20,20,30,.1);}
+  .service-media{aspect-ratio:16/10;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+  .service-media svg{width:44%;transition:transform .5s var(--ease);}
+  .service-card:hover .service-media svg{transform:scale(1.08) translateY(-2px);}
+  .service-body{padding:22px 22px 26px;}
+  .service-body h3{font-size:18px;font-weight:700;margin-bottom:8px;}
+  .service-body p{font-size:14px;color:var(--ink-soft);margin-bottom:14px;}
+  .service-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+  .service-tags span{font-size:12px;font-weight:600;background:var(--paper-tint);border:1px solid var(--line);padding:5px 10px;border-radius:999px;color:var(--ink-soft);}
+  .service-link{font-size:14px;font-weight:700;color:var(--accent);display:inline-flex;align-items:center;gap:6px;}
+  .service-link::after{content:"→";transition:transform .25s var(--ease);}
+  .service-card:hover .service-link::after{transform:translateX(4px);}
+
+  /* ---- Fleet tabs ---- */
+  .fleet{background:var(--paper-tint);}
+  .tabbar{display:flex;gap:10px;margin-bottom:36px;flex-wrap:wrap;}
+  .tabbar button{
+    padding:11px 22px;border-radius:999px;font-weight:600;font-size:14px;
+    background:#fff;border:1px solid var(--line);color:var(--ink-soft);
+    transition:background .25s var(--ease), color .25s var(--ease), border-color .25s var(--ease);
+  }
+  .tabbar button.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .fleet-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;}
+  .fleet-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:22px;transition:transform .3s var(--ease), box-shadow .3s var(--ease);}
+  .fleet-card:hover{transform:translateY(-5px);box-shadow:0 18px 34px rgba(20,20,30,.08);}
+  .fleet-media{aspect-ratio:4/3;border-radius:10px;margin-bottom:16px;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+  .fleet-media svg{width:58%;}
+  .fleet-media img,.service-media img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s var(--ease);}
+  .fleet-card:hover .fleet-media img{transform:scale(1.06);}
+  .service-card:hover .service-media img{transform:scale(1.06);}
+  .fleet-card h3{font-size:16px;font-weight:700;margin-bottom:10px;}
+  .fleet-meta{display:flex;gap:14px;font-size:12.5px;color:var(--ink-soft);margin-bottom:12px;}
+  .fleet-rate{display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);}
+  .fleet-rate b{font-size:16px;color:var(--accent);}
+  .fleet-rate small{display:block;font-size:11px;color:var(--ink-soft);font-weight:600;}
+  .fleet-book{font-size:13px;font-weight:700;color:#fff;background:var(--brand-deep);padding:8px 16px;border-radius:999px;transition:background .25s var(--ease);}
+  .fleet-book:hover{background:#a87400;}
+  [data-fleet-panel]{display:none;}
+  [data-fleet-panel].active{display:grid;}
+
+  /* ---- Areas ---- */
+  .areas-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+  .area-chip{
+    border:1px solid var(--line);border-radius:var(--radius);padding:22px 18px;
+    display:flex;justify-content:space-between;align-items:center;
+    transition:border-color .25s var(--ease), background .25s var(--ease), transform .25s var(--ease);
+  }
+  .area-chip:hover{background:var(--accent);color:#fff;transform:translateY(-3px);}
+  .area-chip span{font-weight:700;font-size:15px;}
+  .area-chip small{font-size:12px;opacity:.75;}
+
+  /* ---- Testimonials ---- */
+  .testimonials{background:var(--accent);color:#fff;}
+  .testimonials .section-head h2, .testimonials .section-head .tag{color:#fff;}
+  .testimonials .section-head p{color:#c6cbdc;}
+  .t-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  .t-card{
+    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:var(--radius);
+    padding:28px;transition:transform .3s var(--ease), background .3s var(--ease);
+  }
+  .t-card:hover{transform:translateY(-6px);background:rgba(255,255,255,.1);}
+  .t-quote{font-size:15px;color:#e4e7f2;margin-bottom:20px;}
+  .t-person{display:flex;align-items:center;gap:12px;}
+  .t-avatar{width:42px;height:42px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#1c2b4a;background:var(--brand);}
+  .t-person b{display:block;font-size:14.5px;}
+  .t-person span{font-size:12.5px;color:#aeb5cc;}
+
+  /* ---- FAQ ---- */
+  .faq-list{max-width:760px;margin:0 auto;border-top:1px solid var(--line);}
+  .faq-item{border-bottom:1px solid var(--line);}
+  .faq-q{
+    width:100%;display:flex;justify-content:space-between;align-items:center;
+    padding:22px 4px;font-weight:700;font-size:15.5px;text-align:left;
+  }
+  .faq-q .mark{
+    width:26px;height:26px;flex:none;border-radius:50%;background:var(--paper-tint);
+    display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--ink-soft);
+    transition:transform .3s var(--ease), background .3s var(--ease);
+  }
+  .faq-item.open .faq-q .mark{transform:rotate(45deg);background:var(--brand);color:var(--ink);}
+  .faq-a{max-height:0;overflow:hidden;transition:max-height .35s var(--ease);}
+  .faq-a p{padding:0 4px 22px;font-size:14.5px;color:var(--ink-soft);max-width:640px;}
+  .faq-item.open .faq-a{max-height:220px;}
+
+  /* ---- CTA band ---- */
+  .cta-band{background:linear-gradient(120deg,var(--brand-deep),var(--brand));border-radius:24px;padding:56px 50px;display:flex;justify-content:space-between;align-items:center;gap:30px;}
+  .cta-band h2{font-size:28px;font-weight:800;margin-bottom:8px;}
+  .cta-band p{font-size:14.5px;color:#4a3400;}
+  .cta-band .btn-dark:hover{box-shadow:0 14px 30px rgba(0,0,0,.25);}
+
+  /* ---- Footer ---- */
+  footer{background:#101522;color:#c6cbdc;padding:70px 0 30px;}
+  .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1.1fr;gap:40px;margin-bottom:50px;}
+  .foot-logo{color:#fff;font-weight:800;font-size:19px;margin-bottom:14px;}
+  .foot-grid p{font-size:14px;line-height:1.7;}
+  .foot-col h4{color:#fff;font-size:14px;margin-bottom:16px;}
+  .foot-col li{margin-bottom:10px;font-size:14px;}
+  .foot-col a{transition:color .2s var(--ease);}
+  .foot-col a:hover{color:#fff;}
+  .foot-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:24px;font-size:13px;color:#7c839c;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+
+  .float-call{
+    position:fixed;bottom:26px;right:26px;z-index:99;
+    background:var(--brand);color:var(--ink);width:58px;height:58px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-size:22px;
+    box-shadow:0 14px 30px rgba(242,183,5,.4);
+    animation:pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{box-shadow:0 14px 30px rgba(242,183,5,.4);}50%{box-shadow:0 14px 30px rgba(242,183,5,.7);}}
+
+  @media (max-width:980px){
+    .navlinks, .navcta .phone{display:none;}
+    .hero-inner{grid-template-columns:1fr;}
+    .feature-grid, .fleet-grid{grid-template-columns:repeat(2,1fr);}
+    .service-grid, .t-grid{grid-template-columns:1fr;}
+    .areas-grid{grid-template-columns:repeat(2,1fr);}
+    .foot-grid{grid-template-columns:1fr 1fr;}
+    .cta-band{flex-direction:column;text-align:center;}
+    .navcta{gap:8px;}
+    .navcta .btn{padding:9px 12px !important;font-size:12.5px !important;}
+
+    .hamburger{display:flex;}
+    .navlinks{
+      display:flex;position:fixed;top:78px;left:0;right:0;bottom:0;
+      background:#fff;flex-direction:column;align-items:stretch;gap:0;
+      padding:10px 20px 30px;overflow-y:auto;
+      transform:translateY(-8px);opacity:0;visibility:hidden;pointer-events:none;
+      transition:transform .25s var(--ease),opacity .2s var(--ease);
+      z-index:200;box-shadow:0 20px 40px rgba(0,0,0,.12);
+    }
+    .navlinks.open{transform:translateY(0);opacity:1;visibility:visible;pointer-events:auto;}
+    .navlinks li{width:100%;border-bottom:1px solid var(--line);}
+    .navlinks li a{display:block;padding:16px 6px;font-size:16px;}
+    .has-menu > a::after{display:none;}
+    .dropdown{
+      position:static;transform:none;
+      box-shadow:none;padding:0 0 8px 14px;display:flex;flex-direction:column;
+      opacity:0;visibility:hidden;pointer-events:none;max-height:0;overflow:hidden;
+    }
+    .navlinks.open .dropdown{opacity:1;visibility:visible;pointer-events:auto;max-height:400px;}
+    .dropdown a{padding:10px 6px;}
+  }
+  @media (min-width:981px){
+    .hamburger{display:none;}
+  }
+  .hamburger{
+    display:none;flex-direction:column;justify-content:center;gap:5px;
+    width:40px;height:40px;border:none;background:none;cursor:pointer;padding:0;flex-shrink:0;
+  }
+  .hamburger span{display:block;width:24px;height:2.5px;background:var(--ink);border-radius:2px;transition:transform .25s var(--ease),opacity .2s var(--ease);}
+  .hamburger.open span:nth-child(1){transform:translateY(7.5px) rotate(45deg);}
+  .hamburger.open span:nth-child(2){opacity:0;}
+  .hamburger.open span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg);}
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important;transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="#home">★ <span>Rental</span>.lk</a>
+    <ul class="navlinks" id="navLinks">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li class="has-menu">
+        <a href="#services">Services</a>
+        <div class="dropdown">
+          <a href="#services">Airport Pick-up & Drop</a>
+          <a href="#services">Car Hire Service</a>
+          <a href="#services">Van Hire Service</a>
+          <a href="#services">Bus Hire</a>
+          <a href="#services">Lorry Hire</a>
+          <a href="#services">Corporate Hire</a>
+          <a href="#services">Wedding Hire Service</a>
+        </div>
+      </li>
+      <li><a href="#fleet">Fleet</a></li>
+      <li class="has-menu">
+        <a href="#areas">Service Areas</a>
+        <div class="dropdown">
+          <a href="#areas">Colombo</a>
+          <a href="#areas">Kandy</a>
+          <a href="#areas">Galle</a>
+          <a href="#areas">Jaffna</a>
+          <a href="#areas">View All Areas</a>
+        </div>
+      </li>
+      <li><a href="#faq">FAQ</a></li>
+      <li id="myBookingsNavItem" style="display:none;"><a href="#" id="myBookingsLink">My Bookings</a></li>
+    </ul>
+    <div class="navcta">
+      <span class="phone">0766 221 422</span>
+      <span id="authArea">
+        <a class="btn" href="#" id="loginBtn" style="padding:11px 16px;font-size:14px;">Login</a>
+        <a class="btn btn-dark" href="#" id="registerBtn" style="padding:11px 16px;font-size:14px;">Register</a>
+      </span>
+      <a class="btn btn-dark" href="#book" style="padding:11px 20px;font-size:14px;">Book Now</a>
+      <button class="hamburger" id="hamburgerBtn" type="button" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="hero" id="home">
+  <div class="wrap hero-inner">
+    <div>
+      <span class="eyebrow">Sri Lanka's Trusted Taxi Service</span>
+      <h1>Your ride, anywhere in <em>Sri Lanka</em>, anytime.</h1>
+      <p>Fixed pricing, professional drivers, and island-wide coverage — from a quick city hop to a full airport transfer.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#book">Book Your Ride</a>
+        <a class="btn btn-outline" href="tel:+94766221422">Call Now — 0766 221 422</a>
+      </div>
+    </div>
+    <div class="hero-art">
+      <svg viewBox="0 0 220 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="110" cy="118" rx="95" ry="10" fill="#0a0e1c"/>
+        <path d="M25 95 L40 62 Q46 52 58 52 L150 52 Q162 52 168 62 L185 95 Z" fill="#f2b705"/>
+        <path d="M62 58 L92 58 L88 82 L58 82 Z" fill="#1c2b4a" opacity=".85"/>
+        <path d="M100 58 L146 58 L152 82 L108 82 Z" fill="#1c2b4a" opacity=".85"/>
+        <rect x="25" y="88" width="160" height="14" rx="4" fill="#c98f00"/>
+        <rect x="14" y="76" width="14" height="8" rx="3" fill="#fff4d6"/>
+        <circle cx="62" cy="104" r="16" fill="#0f1424"/>
+        <circle cx="62" cy="104" r="7" fill="#dfe3ee"/>
+        <circle cx="152" cy="104" r="16" fill="#0f1424"/>
+        <circle cx="152" cy="104" r="7" fill="#dfe3ee"/>
+      </svg>
+      <div class="hero-stats">
+        <div><b>24/7</b><span>Dispatch</span></div>
+        <div><b>25+</b><span>Districts</span></div>
+        <div><b>4.9★</b><span>Rated</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features" id="about">
+  <div class="wrap">
+    <div class="section-head center" style="margin-left:auto;margin-right:auto;">
+      <span class="tag">Why Rental.lk</span>
+      <h2>Experience excellence, every ride</h2>
+      <p>Thousands of travelers trust us for their transportation needs across the island.</p>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-card"><div class="feature-num">01</div><h3>Safe & Secure</h3><p>Professional drivers and well-maintained vehicles for your safety.</p></div>
+      <div class="feature-card"><div class="feature-num">02</div><h3>24/7 Availability</h3><p>Round-the-clock service for airport transfers and emergency rides.</p></div>
+      <div class="feature-card"><div class="feature-num">03</div><h3>Island-wide Coverage</h3><p>From Colombo to Jaffna, we cover every corner of Sri Lanka.</p></div>
+      <div class="feature-card"><div class="feature-num">04</div><h3>Fixed Pricing</h3><p>Transparent rates with no hidden charges or surge pricing.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="services">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="tag">Our Premium Services</span>
+      <h2>Travel in style & comfort</h2>
+      <p>Tailored transport solutions for every journey, from solo airport runs to full wedding convoys.</p>
+    </div>
+    <div class="service-grid">
+      <div class="service-card">
+        <div class="service-media" style="background:linear-gradient(135deg,#eef1f8,#cfd8ec);">
+          <img src="https://loremflickr.com/640/400/airport,car?lock=201" alt="Airport Pick-up & Drop" loading="lazy">
+        </div>
+        <div class="service-body">
+          <h3>Airport Pick-up & Drop</h3>
+          <p>Reliable transfers with flight tracking and meet & greet.</p>
+          <div class="service-tags"><span>Flight Tracking</span><span>Meet & Greet</span><span>24/7</span></div>
+          <a class="service-link" href="#">Details</a>
+        </div>
+      </div>
+      <div class="service-card">
+        <div class="service-media" style="background:linear-gradient(135deg,#fff4d6,#ffe7a8);">
+          <img src="https://loremflickr.com/640/400/carhire,sedan?lock=202" alt="Car Hire Service" loading="lazy">
+        </div>
+        <div class="service-body">
+          <h3>Car Hire Service</h3>
+          <p>Affordable and comfortable car hire options for any distance.</p>
+          <div class="service-tags"><span>AC Vehicles</span><span>Pro Drivers</span></div>
+          <a class="service-link" href="#">Details</a>
+        </div>
+      </div>
+      <div class="service-card">
+        <div class="service-media" style="background:linear-gradient(135deg,#e6ece0,#c9d9bd);">
+          <img src="https://loremflickr.com/640/400/vanhire,van?lock=203" alt="Van Hire Service" loading="lazy">
+        </div>
+        <div class="service-body">
+          <h3>Van Hire Service</h3>
+          <p>Comfortable vans for groups and families, 6 to 15 seats.</p>
+          <div class="service-tags"><span>AC & Dual AC</span><span>Experienced Drivers</span></div>
+          <a class="service-link" href="#">Details</a>
+        </div>
+      </div>
+      <div class="service-card">
+        <div class="service-media" style="background:linear-gradient(135deg,#eaeaf5,#ccd0ea);">
+          <img src="https://loremflickr.com/640/400/bushire,coach?lock=204" alt="Bus Hire" loading="lazy">
+        </div>
+        <div class="service-body">
+          <h3>Bus Hire</h3>
+          <p>Spacious buses for groups and events, AC & non-AC options.</p>
+          <div class="service-tags"><span>Luxury Seating</span><span>Sound System</span></div>
+          <a class="service-link" href="#">Details</a>
+        </div>
+      </div>
+      <div class="service-card">
+        <div class="service-media" style="background:linear-gradient(135deg,#f2e4d8,#e0c1a5);">
+          <img src="https://loremflickr.com/640/400/lorryhire,truck?lock=205" alt="Lorry Hire" loading="lazy">
+        </div>
+        <div class="service-body">
+          <h3>Lorry Hire</h3>
+          <p>Goods transport and moving services, island-wide.</p>
+          <div class="service-tags"><span>Various Sizes</span><span>Loading Help</span></div>
+          <a class="service-link" href="#">Details</a>
+        </div>
+      </div>
+      <div class="service-card">
+        <div class="service-media" style="background:linear-gradient(135deg,#e2e7f2,#b9c4de);">
+          <img src="https://loremflickr.com/640/400/luxurycar,chauffeur?lock=206" alt="Corporate Hire" loading="lazy">
+        </div>
+        <div class="service-body">
+          <h3>Corporate Hire</h3>
+          <p>Premium transport for business professionals, monthly packages.</p>
+          <div class="service-tags"><span>Luxury Fleet</span><span>Chauffeurs</span></div>
+          <a class="service-link" href="#">Details</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="fleet" id="recommendations" style="display:none;">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="tag">Just For You</span>
+      <h2>Recommended based on your bookings</h2>
+      <p>Personalized picks from our recommendation engine.</p>
+    </div>
+    <div class="fleet-grid" id="recommendationsGrid" style="display:grid;"></div>
+  </div>
+</section>
+
+<section class="fleet" id="fleet">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="tag">Our Fleet</span>
+      <h2>The perfect ride for every journey</h2>
+      <p>Well-maintained vehicles, from fuel-efficient mini cars to spacious coaches.</p>
+    </div>
+    <div class="tabbar">
+      <button class="active" data-tab="cars">Cars</button>
+      <button data-tab="vans">Vans</button>
+      <button data-tab="lorries">Lorries</button>
+      <button data-tab="buses">Buses</button>
+    </div>
+
+    <div class="fleet-grid" data-fleet-panel="cars" style="display:grid;">
+      <div class="fleet-card">
+        <div class="fleet-media" style="background:linear-gradient(135deg,#fff4d6,#ffe7a8);">
+          <img src="https://loremflickr.com/640/480/wagonr,hatchback?lock=101" alt="Mini Car - Wagon R" loading="lazy">
+        </div>
+        <h3>Mini Car — Wagon R</h3>
+        <div class="fleet-meta"><span>Seats 3</span><span>Bags 2</span><span>AC</span></div>
+        <div class="fleet-rate"><div><small>Starts at</small><b>LKR 90/km</b></div><a class="fleet-book" href="#book">Book</a></div>
+      </div>
+      <div class="fleet-card">
+        <div class="fleet-media" style="background:linear-gradient(135deg,#eef1f8,#cfd8ec);">
+          <img src="https://loremflickr.com/640/480/alto,microcar?lock=102" alt="Micro - Alto" loading="lazy">
+        </div>
+        <h3>Micro — Alto</h3>
+        <div class="fleet-meta"><span>Seats 3</span><span>Bags 1</span><span>AC</span></div>
+        <div class="fleet-rate"><div><small>Starts at</small><b>LKR 85/km</b></div><a class="fleet-book" href="#book">Book</a></div>
+      </div>
+      <div class="fleet-card">
+        <div class="fleet-media" style="background:linear-gradient(135deg,#e2e7f2,#b9c4de);">
+          <img src="https://loremflickr.com/640/480/toyota,sedan?lock=103" alt="Sedan - Prius / Axio" loading="lazy">
+        </div>
+        <h3>Sedan — Prius / Axio</h3>
+        <div class="fleet-meta"><span>Seats 4</span><span>Bags 3</span><span>AC</span></div>
+        <div class="fleet-rate"><div><small>Starts at</small><b>LKR 110/km</b></div><a class="fleet-book" href="#book">Book</a></div>
+      </div>
+      <div class="fleet-card">
+        <div class="fleet-media" style="background:linear-gradient(135deg,#e6ece0,#c9d9bd);">
+          <img src="https://loremflickr.com/640/480/suv,offroad?lock=104" alt="SUV" loading="lazy">
+        </div>
+        <h3>SUV</h3>
+        <div class="fleet-meta"><span>Seats 4</span><span>Bags 3</span><span>AC</span></div>
+        <div class="fleet-rate"><div><small>Starts at</small><b>LKR 150/km</b></div><a class="fleet-book" href="#book">Book</a></div>
+      </div>
+    </div>
+
+    <div class="fleet-grid" data-fleet-panel="vans">
+      <div class="fleet-card"><div class="fleet-media" style="background:linear-gradient(135deg,#e6ece0,#c9d9bd);">
+          <img src="https://loremflickr.com/640/480/minivan?lock=105" alt="Mini Van - 6 Seater" loading="lazy">
+        </div><h3>Mini Van — 6 Seater</h3><div class="fleet-meta"><span>Seats 6</span><span>AC</span></div><div class="fleet-rate"><div><small>Starts at</small><b>LKR 130/km</b></div><a class="fleet-book" href="#book">Book</a></div></div>
+      <div class="fleet-card"><div class="fleet-media" style="background:linear-gradient(135deg,#eaeaf5,#ccd0ea);">
+          <img src="https://loremflickr.com/640/480/van,passenger?lock=106" alt="KDH - 10 Seater" loading="lazy">
+        </div><h3>KDH — 10 Seater</h3><div class="fleet-meta"><span>Seats 10</span><span>Dual AC</span></div><div class="fleet-rate"><div><small>Starts at</small><b>LKR 160/km</b></div><a class="fleet-book" href="#book">Book</a></div></div>
+      <div class="fleet-card"><div class="fleet-media" style="background:linear-gradient(135deg,#e2e7f2,#b9c4de);">
+          <img src="https://loremflickr.com/640/480/coaster,minibus?lock=107" alt="Coaster - 15 Seater" loading="lazy">
+        </div><h3>Coaster — 15 Seater</h3><div class="fleet-meta"><span>Seats 15</span><span>AC</span></div><div class="fleet-rate"><div><small>Starts at</small><b>LKR 190/km</b></div><a class="fleet-book" href="#book">Book</a></div></div>
+    </div>
+
+    <div class="fleet-grid" data-fleet-panel="lorries">
+      <div class="fleet-card"><div class="fleet-media" style="background:linear-gradient(135deg,#f2e4d8,#e0c1a5);">
+          <img src="https://loremflickr.com/640/480/minilorry,truck?lock=108" alt="Mini Lorry" loading="lazy">
+        </div><h3>Mini Lorry</h3><div class="fleet-meta"><span>1 Ton</span></div><div class="fleet-rate"><div><small>Starts at</small><b>LKR 120/km</b></div><a class="fleet-book" href="#book">Book</a></div></div>
+      <div class="fleet-card"><div class="fleet-media" style="background:linear-gradient(135deg,#e8d9c8,#cba079);">
+          <img src="https://loremflickr.com/640/480/lorry,truck?lock=109" alt="Medium Lorry" loading="lazy">
+        </div><h3>Medium Lorry</h3><div class="fleet-meta"><span>3 Ton</span></div><div class="fleet-rate"><div><small>Starts at</small><b>LKR 170/km</b></div><a class="fleet-book" href="#book">Book</a></div></div>
+    </div>
+
+    <div class="fleet-grid" data-fleet-panel="buses">
+      <div class="fleet-card"><div class="fleet-media" style="background:linear-gradient(135deg,#eaeaf5,#ccd0ea);">
+          <img src="https://loremflickr.com/640/480/bus,coach?lock=110" alt="Luxury Bus - 40 Seater" loading="lazy">
+        </div><h3>Luxury Bus — 40 Seater</h3><div class="fleet-meta"><span>Seats 40</span><span>AC</span></div><div class="fleet-rate"><div><small>Starts at</small><b>LKR 220/km</b></div><a class="fleet-book" href="#book">Book</a></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="areas">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="tag">Explore</span>
+      <h2>Popular service areas</h2>
+      <p>We operate in all major districts — select a location to see available vehicles.</p>
+    </div>
+    <div class="areas-grid">
+      <a class="area-chip" href="#"><span>Colombo</span><small>→</small></a>
+      <a class="area-chip" href="#"><span>Gampaha</span><small>→</small></a>
+      <a class="area-chip" href="#"><span>Kandy</span><small>→</small></a>
+      <a class="area-chip" href="#"><span>Galle</span><small>→</small></a>
+      <a class="area-chip" href="#"><span>Matara</span><small>→</small></a>
+      <a class="area-chip" href="#"><span>Jaffna</span><small>→</small></a>
+      <a class="area-chip" href="#"><span>Kurunegala</span><small>→</small></a>
+      <a class="area-chip" href="#"><span>Trincomalee</span><small>→</small></a>
+    </div>
+  </div>
+</section>
+
+<section class="testimonials">
+  <div class="wrap">
+    <div class="section-head center" style="margin-left:auto;margin-right:auto;">
+      <span class="tag">Testimonials</span>
+      <h2>What our customers say</h2>
+    </div>
+    <div class="t-grid">
+      <div class="t-card">
+        <p class="t-quote">"Rental.lk made our Sri Lanka trip unforgettable. The driver was professional, punctual, and very knowledgeable."</p>
+        <div class="t-person"><div class="t-avatar">SJ</div><div><b>Sarah Jenkins</b><span>Tourist from UK</span></div></div>
+      </div>
+      <div class="t-card">
+        <p class="t-quote">"I use their corporate hire service regularly for client meetings. Vehicles are always clean and drivers courteous."</p>
+        <div class="t-person"><div class="t-avatar">KP</div><div><b>Kumar Perera</b><span>Business Traveler</span></div></div>
+      </div>
+      <div class="t-card">
+        <p class="t-quote">"Great prices for the airport drop. Booking was super easy and the driver arrived exactly on time."</p>
+        <div class="t-person"><div class="t-avatar">ER</div><div><b>Elena Rossi</b><span>Backpacker</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="section-head center" style="margin-left:auto;margin-right:auto;">
+      <span class="tag">Help & Support</span>
+      <h2>Frequently asked questions</h2>
+      <p>Find answers to common questions about our services, booking process, and policies.</p>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item open">
+        <button class="faq-q"><span>How do I book with Rental.lk?</span><span class="mark">+</span></button>
+        <div class="faq-a"><p>Visit our website, enter your pickup and drop locations, choose your vehicle, and confirm. Instant confirmation, every time.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>Does Rental.lk provide airport transfers?</span><span class="mark">+</span></button>
+        <div class="faq-a"><p>Yes — with flight tracking and meet & greet at Bandaranaike International Airport and beyond.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>Are your drivers verified?</span><span class="mark">+</span></button>
+        <div class="faq-a"><p>All drivers are background-checked, licensed, and trained for both city and long-distance routes.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>What vehicles are available in your fleet?</span><span class="mark">+</span></button>
+        <div class="faq-a"><p>Mini cars, sedans, SUVs, vans, buses, and lorries — sized for solo trips up to full group transport.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>Can I cancel my booking?</span><span class="mark">+</span></button>
+        <div class="faq-a"><p>Yes, free cancellation up to a set window before pickup — details are shown at booking.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="book">
+  <div class="wrap">
+    <div class="cta-band">
+      <div>
+        <h2>Ready to start your journey?</h2>
+        <p>Instant confirmation • 24/7 support • Professional drivers</p>
+      </div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;">
+        <a class="btn btn-dark" href="tel:+94766221422">Book Now</a>
+        <a class="btn" style="background:#fff;color:var(--ink);" href="#">Contact Us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-logo">★ Rental.lk</div>
+        <p>Trusted rental taxi & cab service in Sri Lanka providing airport transfers, city rides, and island-wide travel with professional drivers.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">About Rental.lk</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#book">Online Booking</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Our Services</h4>
+        <ul>
+          <li><a href="#services">Airport Transfers</a></li>
+          <li><a href="#services">Van Hire</a></li>
+          <li><a href="#services">Bus Hire</a></li>
+          <li><a href="#services">Lorry Hire</a></li>
+          <li><a href="#services">Corporate Hire</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Get In Touch</h4>
+        <ul>
+          <li>Island-wide Taxi Service — Sri Lanka</li>
+          <li><a href="tel:+94766232321">0766 232 321</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Rental.lk — Taxi & Cab rental Service in Sri Lanka.</span>
+      <span>Terms · Privacy Policy</span>
+    </div>
+  </div>
+</footer>
+
+<a class="float-call" href="tel:+94766221422" aria-label="Call now">☎</a>
+
+<!-- ===== Auth Modal (Login / Register) ===== -->
+<div id="authModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:12px;padding:28px;max-width:380px;width:90%;position:relative;">
+    <button id="authModalClose" style="position:absolute;top:10px;right:14px;background:none;border:none;font-size:20px;cursor:pointer;">×</button>
+
+    <div id="loginForm">
+      <h3 style="margin-top:0;">Login</h3>
+      <p id="loginError" style="color:#c0392b;font-size:13px;display:none;"></p>
+      <input id="loginEmail" type="email" placeholder="Email" style="width:100%;padding:10px;margin:6px 0;" required>
+      <input id="loginPassword" type="password" placeholder="Password" style="width:100%;padding:10px;margin:6px 0;" required>
+      <button id="loginSubmit" class="btn btn-dark" style="width:100%;margin-top:10px;">Login</button>
+      <p style="font-size:13px;margin-top:12px;">No account? <a href="#" id="switchToRegister">Register</a></p>
+    </div>
+
+    <div id="registerForm" style="display:none;">
+      <h3 style="margin-top:0;">Register</h3>
+      <p id="registerError" style="color:#c0392b;font-size:13px;display:none;"></p>
+      <input id="regName" type="text" placeholder="Full name" style="width:100%;padding:10px;margin:6px 0;" required>
+      <input id="regEmail" type="email" placeholder="Email" style="width:100%;padding:10px;margin:6px 0;" required>
+      <input id="regPhone" type="text" placeholder="Phone" style="width:100%;padding:10px;margin:6px 0;" required>
+      <input id="regNic" type="text" placeholder="NIC" style="width:100%;padding:10px;margin:6px 0;" required>
+      <input id="regPassword" type="password" placeholder="Password (min 6 chars)" style="width:100%;padding:10px;margin:6px 0;" required>
+      <button id="registerSubmit" class="btn btn-dark" style="width:100%;margin-top:10px;">Create account</button>
+      <p style="font-size:13px;margin-top:12px;">Already have an account? <a href="#" id="switchToLogin">Login</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Booking Modal ===== -->
+<div id="bookingModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:12px;padding:28px;max-width:400px;width:90%;position:relative;max-height:90vh;overflow-y:auto;">
+    <button id="bookingModalClose" style="position:absolute;top:10px;right:14px;background:none;border:none;font-size:20px;cursor:pointer;">×</button>
+
+    <!-- Step 1: dates -->
+    <div id="bookingStepDates">
+      <h3 style="margin-top:0;" id="bookingVehicleName">Book vehicle</h3>
+      <p id="bookingError" style="color:#c0392b;font-size:13px;display:none;"></p>
+      <label style="font-size:13px;">Pickup date</label>
+      <input id="bookingStart" type="date" style="width:100%;padding:10px;margin:6px 0;">
+      <label style="font-size:13px;">Return date</label>
+      <input id="bookingEnd" type="date" style="width:100%;padding:10px;margin:6px 0;">
+      <label style="font-size:13px;">Pickup location</label>
+      <input id="bookingPickup" type="text" value="Colombo" style="width:100%;padding:10px;margin:6px 0;">
+      <p id="bookingCostPreview" style="font-size:13px;color:#555;"></p>
+      <button id="bookingSubmit" class="btn btn-dark" style="width:100%;margin-top:10px;">Confirm Booking</button>
+    </div>
+
+    <!-- Step 2: payment (simulated gateway) -->
+    <div id="bookingStepPay" style="display:none;">
+      <h3 style="margin-top:0;">Pay for your booking</h3>
+      <p style="font-size:12.5px;color:#666;margin-bottom:10px;">Simulated gateway — a card number ending in an <b>even digit</b> succeeds, odd declines, so you can test both paths.</p>
+      <p id="payError" style="color:#c0392b;font-size:13px;display:none;"></p>
+      <label style="font-size:13px;">Card number</label>
+      <input id="payCard" type="text" placeholder="4111 1111 1111 1112" style="width:100%;padding:10px;margin:6px 0;">
+      <p id="payAmount" style="font-size:14px;font-weight:700;margin:10px 0;"></p>
+      <button id="paySubmit" class="btn btn-dark" style="width:100%;">Pay Now</button>
+      <button id="payLaterBtn" class="btn" style="width:100%;margin-top:8px;border:1.5px solid var(--line);">I'll pay later</button>
+    </div>
+
+    <!-- Step 3: done -->
+    <div id="bookingStepDone" style="display:none;text-align:center;">
+      <div style="font-size:36px;">✅</div>
+      <h3 id="bookingDoneTitle">Booking Confirmed</h3>
+      <p id="bookingDoneText" style="font-size:13px;color:#555;"></p>
+      <button id="bookingDoneClose" class="btn btn-dark" style="width:100%;margin-top:10px;">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- My Bookings modal -->
+<div id="myBookingsModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:12px;padding:28px;max-width:560px;width:92%;max-height:85vh;overflow-y:auto;position:relative;">
+    <button id="myBookingsClose" style="position:absolute;top:10px;right:14px;background:none;border:none;font-size:20px;cursor:pointer;">×</button>
+    <h3 style="margin-top:0;">My Bookings</h3>
+    <div id="myBookingsList" style="font-size:13.5px;"></div>
+  </div>
+</div>
+
+<!-- Leave a review modal -->
+<div id="reviewModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:12px;padding:28px;max-width:380px;width:90%;position:relative;">
+    <button id="reviewModalClose" style="position:absolute;top:10px;right:14px;background:none;border:none;font-size:20px;cursor:pointer;">×</button>
+    <h3 style="margin-top:0;">Rate your rental</h3>
+    <p id="reviewError" style="color:#c0392b;font-size:13px;display:none;"></p>
+    <div id="reviewStars" style="font-size:28px;letter-spacing:6px;margin:10px 0;cursor:pointer;">☆☆☆☆☆</div>
+    <textarea id="reviewComment" placeholder="How was the vehicle and service? (optional)" style="width:100%;padding:10px;min-height:80px;font-family:inherit;"></textarea>
+    <button id="reviewSubmit" class="btn btn-dark" style="width:100%;margin-top:10px;">Submit Review</button>
+  </div>
+</div>
+
+<script>
+  // FAQ accordion
+  document.querySelectorAll('.faq-item').forEach(item=>{
+    item.querySelector('.faq-q').addEventListener('click', ()=>{
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+      if(!isOpen) item.classList.add('open');
+    });
+  });
+
+  // Fleet tabs
+  const CATEGORY_BY_TAB = { cars: 'Car', vans: 'Van', lorries: 'Lorry', buses: 'Bus' };
+
+  document.querySelectorAll('.tabbar button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.tabbar button').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const target = btn.dataset.tab;
+      document.querySelectorAll('[data-fleet-panel]').forEach(p=>{
+        p.classList.toggle('active', p.dataset.fleetPanel === target);
+        p.style.display = (p.dataset.fleetPanel === target) ? 'grid' : 'none';
+      });
+      loadVehicles(target);
+    });
+  });
+
+  /* =========================================================
+     Backend integration
+     - Node backend:            http://localhost:5000/api
+     - Change API_BASE below if the backend runs elsewhere.
+     ========================================================= */
+  const API_BASE = 'http://localhost:5000/api';
+
+  function getToken() { return localStorage.getItem('rentalToken'); }
+  function getUser() {
+    const raw = localStorage.getItem('rentalUser');
+    return raw ? JSON.parse(raw) : null;
+  }
+  function setSession(token, user) {
+    localStorage.setItem('rentalToken', token);
+    localStorage.setItem('rentalUser', JSON.stringify(user));
+  }
+  function clearSession() {
+    localStorage.removeItem('rentalToken');
+    localStorage.removeItem('rentalUser');
+  }
+
+  async function apiFetch(path, options = {}) {
+    const headers = Object.assign({ 'Content-Type': 'application/json' }, options.headers || {});
+    const token = getToken();
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.message || `Request failed (${res.status})`);
+    return data;
+  }
+
+  // ---------- Auth UI ----------
+  const authModal = document.getElementById('authModal');
+  const loginBtn = document.getElementById('loginBtn');
+  const registerBtn = document.getElementById('registerBtn');
+  const authArea = document.getElementById('authArea');
+
+  function refreshAuthArea() {
+    const user = getUser();
+    if (user) {
+      authArea.innerHTML = `<span style="font-size:14px;margin-right:10px;">Hi, ${user.name.split(' ')[0]}</span>
+        <a class="btn" href="#" id="logoutBtn" style="padding:11px 16px;font-size:14px;">Logout</a>`;
+      document.getElementById('logoutBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        clearSession();
+        refreshAuthArea();
+        document.getElementById('recommendations').style.display = 'none';
+      });
+      document.getElementById('recommendations').style.display = '';
+      loadRecommendations();
+    } else {
+      authArea.innerHTML = `<a class="btn" href="#" id="loginBtn" style="padding:11px 16px;font-size:14px;">Login</a>
+        <a class="btn btn-dark" href="#" id="registerBtn" style="padding:11px 16px;font-size:14px;">Register</a>`;
+      document.getElementById('loginBtn').addEventListener('click', (e) => { e.preventDefault(); openAuthModal('login'); });
+      document.getElementById('registerBtn').addEventListener('click', (e) => { e.preventDefault(); openAuthModal('register'); });
+      document.getElementById('recommendations').style.display = 'none';
+    }
+    refreshMyBookingsNavVisibility();
+  }
+
+  function openAuthModal(mode) {
+    authModal.style.display = 'flex';
+    document.getElementById('loginForm').style.display = mode === 'login' ? '' : 'none';
+    document.getElementById('registerForm').style.display = mode === 'register' ? '' : 'none';
+  }
+  document.getElementById('authModalClose').addEventListener('click', () => authModal.style.display = 'none');
+  document.getElementById('switchToRegister').addEventListener('click', (e) => { e.preventDefault(); openAuthModal('register'); });
+  document.getElementById('switchToLogin').addEventListener('click', (e) => { e.preventDefault(); openAuthModal('login'); });
+
+  loginBtn.addEventListener('click', (e) => { e.preventDefault(); openAuthModal('login'); });
+  registerBtn.addEventListener('click', (e) => { e.preventDefault(); openAuthModal('register'); });
+
+  document.getElementById('loginSubmit').addEventListener('click', async () => {
+    const errEl = document.getElementById('loginError');
+    errEl.style.display = 'none';
+    try {
+      const data = await apiFetch('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: document.getElementById('loginEmail').value,
+          password: document.getElementById('loginPassword').value
+        })
+      });
+      setSession(data.token, data.user);
+      authModal.style.display = 'none';
+      refreshAuthArea();
+    } catch (err) {
+      errEl.textContent = err.message;
+      errEl.style.display = 'block';
+    }
+  });
+
+  document.getElementById('registerSubmit').addEventListener('click', async () => {
+    const errEl = document.getElementById('registerError');
+    errEl.style.display = 'none';
+    try {
+      const data = await apiFetch('/auth/register', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: document.getElementById('regName').value,
+          email: document.getElementById('regEmail').value,
+          phone: document.getElementById('regPhone').value,
+          nic: document.getElementById('regNic').value,
+          password: document.getElementById('regPassword').value
+        })
+      });
+      setSession(data.token, data.user);
+      authModal.style.display = 'none';
+      refreshAuthArea();
+    } catch (err) {
+      errEl.textContent = err.message;
+      errEl.style.display = 'block';
+    }
+  });
+
+  // ---------- Vehicle loading (real data from MongoDB via the Node API) ----------
+  function vehicleCardHtml(v) {
+    const img = (v.images && v.images[0]) || 'https://loremflickr.com/640/480/car?lock=' + v._id;
+    return `
+      <div class="fleet-card">
+        <div class="fleet-media" style="background:linear-gradient(135deg,#f0f0f0,#ddd);">
+          <img src="${img}" alt="${v.name}" loading="lazy">
+        </div>
+        <h3>${v.name}</h3>
+        <div class="fleet-meta"><span>${v.seats} Seats</span><span>${v.transmission}</span></div>
+        <div class="fleet-rate">
+          <div><small>Per day</small><b>LKR ${v.rentalRatePerDay}</b></div>
+          <a class="fleet-book" href="#" data-vehicle-id="${v._id}" data-vehicle-name="${v.name}" data-rate="${v.rentalRatePerDay}">Book</a>
+        </div>
+      </div>`;
+  }
+
+  async function loadVehicles(tab) {
+    const panel = document.querySelector(`[data-fleet-panel="${tab}"]`);
+    if (!panel) return;
+    const category = CATEGORY_BY_TAB[tab];
+    try {
+      const data = await apiFetch(`/vehicles?category=${category}&limit=12`);
+      if (data.data && data.data.length > 0) {
+        panel.innerHTML = data.data.map(vehicleCardHtml).join('');
+        attachBookButtons(panel);
+      }
+      // if the API returns nothing, the original static placeholder cards stay visible
+    } catch (err) {
+      console.warn('Could not load vehicles from backend, showing placeholder fleet.', err);
+    }
+  }
+
+  function attachBookButtons(scope) {
+    scope.querySelectorAll('.fleet-book').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (!getToken()) { openAuthModal('login'); return; }
+        openBookingModal(btn.dataset.vehicleId, btn.dataset.vehicleName, Number(btn.dataset.rate));
+      });
+    });
+  }
+
+  // ---------- Booking modal ----------
+  const bookingModal = document.getElementById('bookingModal');
+  let currentBooking = { vehicleId: null, rate: 0 };
+
+  function openBookingModal(vehicleId, name, rate) {
+    currentBooking = { vehicleId, rate };
+    document.getElementById('bookingVehicleName').textContent = `Book: ${name}`;
+    document.getElementById('bookingError').style.display = 'none';
+    document.getElementById('bookingCostPreview').textContent = '';
+    document.getElementById('bookingStart').value = '';
+    document.getElementById('bookingEnd').value = '';
+    document.getElementById('bookingStepDates').style.display = 'block';
+    document.getElementById('bookingStepPay').style.display = 'none';
+    document.getElementById('bookingStepDone').style.display = 'none';
+    bookingModal.style.display = 'flex';
+  }
+  document.getElementById('bookingModalClose').addEventListener('click', () => bookingModal.style.display = 'none');
+
+  function updateCostPreview() {
+    const start = document.getElementById('bookingStart').value;
+    const end = document.getElementById('bookingEnd').value;
+    const preview = document.getElementById('bookingCostPreview');
+    if (start && end) {
+      const days = Math.round((new Date(end) - new Date(start)) / 86400000);
+      if (days > 0) {
+        preview.textContent = `Estimated cost: LKR ${(days * currentBooking.rate).toLocaleString()} for ${days} day(s)`;
+        return;
+      }
+    }
+    preview.textContent = '';
+  }
+  document.getElementById('bookingStart').addEventListener('change', updateCostPreview);
+  document.getElementById('bookingEnd').addEventListener('change', updateCostPreview);
+
+  document.getElementById('bookingSubmit').addEventListener('click', async () => {
+    const errEl = document.getElementById('bookingError');
+    errEl.style.display = 'none';
+    try {
+      const data = await apiFetch('/bookings', {
+        method: 'POST',
+        body: JSON.stringify({
+          vehicleId: currentBooking.vehicleId,
+          startDate: document.getElementById('bookingStart').value,
+          endDate: document.getElementById('bookingEnd').value,
+          pickupLocation: document.getElementById('bookingPickup').value,
+          returnLocation: document.getElementById('bookingPickup').value
+        })
+      });
+      currentBooking.bookingId = data.data._id;
+      currentBooking.amount = data.data.estimatedCost;
+      document.getElementById('payAmount').textContent = `Amount due: LKR ${data.data.estimatedCost.toLocaleString()}`;
+      document.getElementById('bookingStepDates').style.display = 'none';
+      document.getElementById('bookingStepPay').style.display = 'block';
+    } catch (err) {
+      errEl.textContent = err.message;
+      errEl.style.display = 'block';
+    }
+  });
+
+  function showBookingDone(title, text) {
+    document.getElementById('bookingStepDates').style.display = 'none';
+    document.getElementById('bookingStepPay').style.display = 'none';
+    document.getElementById('bookingStepDone').style.display = 'block';
+    document.getElementById('bookingDoneTitle').textContent = title;
+    document.getElementById('bookingDoneText').textContent = text;
+  }
+
+  document.getElementById('paySubmit').addEventListener('click', async () => {
+    const errEl = document.getElementById('payError');
+    errEl.style.display = 'none';
+    const cardNumber = document.getElementById('payCard').value.replace(/\s+/g, '');
+    if (cardNumber.length < 12) { errEl.textContent = 'Enter a card number (simulated gateway).'; errEl.style.display = 'block'; return; }
+    try {
+      const data = await apiFetch('/payments', {
+        method: 'POST',
+        body: JSON.stringify({ bookingId: currentBooking.bookingId, cardNumber })
+      });
+      showBookingDone('Payment Successful', `Ref: ${data.data.payment.transactionRef}. Your booking is confirmed — see "My Bookings" in the menu.`);
+    } catch (err) {
+      errEl.textContent = err.message;
+      errEl.style.display = 'block';
+    }
+  });
+
+  document.getElementById('payLaterBtn').addEventListener('click', () => {
+    showBookingDone('Booking Saved', 'Your booking is Pending payment. Pay any time from "My Bookings" in the menu.');
+  });
+
+  document.getElementById('bookingDoneClose').addEventListener('click', () => {
+    bookingModal.style.display = 'none';
+    document.getElementById('bookingStepDates').style.display = 'block';
+    document.getElementById('bookingStepPay').style.display = 'none';
+    document.getElementById('bookingStepDone').style.display = 'none';
+    refreshMyBookingsNavVisibility();
+  });
+
+  // ---------- My Bookings ----------
+  const myBookingsModal = document.getElementById('myBookingsModal');
+  document.getElementById('myBookingsClose').addEventListener('click', () => myBookingsModal.style.display = 'none');
+
+  function refreshMyBookingsNavVisibility() {
+    document.getElementById('myBookingsNavItem').style.display = getUser() ? '' : 'none';
+  }
+
+  async function loadMyBookings() {
+    const list = document.getElementById('myBookingsList');
+    list.innerHTML = 'Loading…';
+    try {
+      const data = await apiFetch('/bookings/my');
+      if (!data.data.length) { list.innerHTML = '<p style="color:#777;">No bookings yet.</p>'; return; }
+      list.innerHTML = data.data.map(b => `
+        <div style="border-bottom:1px solid var(--line);padding:12px 0;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+          <div>
+            <b>${b.vehicle ? b.vehicle.name : 'Vehicle'}</b><br>
+            <span style="color:#777;">${new Date(b.startDate).toLocaleDateString()} → ${new Date(b.endDate).toLocaleDateString()} · LKR ${b.estimatedCost.toLocaleString()}</span><br>
+            <span style="display:inline-block;margin-top:4px;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:#eef1f8;color:var(--accent);">${b.status}</span>
+            <span style="display:inline-block;margin-top:4px;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:#fff4d6;color:#8a6100;">${b.paymentStatus}</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
+            ${b.paymentStatus === 'Unpaid' && b.status !== 'Cancelled' ? `<button class="btn btn-dark pay-now-btn" data-id="${b._id}" data-amount="${b.estimatedCost}" style="padding:6px 12px;font-size:12px;">Pay Now</button>` : ''}
+            ${['Pending','Confirmed'].includes(b.status) ? `<button class="btn cancel-btn" data-id="${b._id}" style="padding:6px 12px;font-size:12px;border:1.5px solid #c0392b;color:#c0392b;">Cancel</button>` : ''}
+            ${b.status === 'Completed' ? `<button class="btn review-btn" data-booking-id="${b._id}" style="padding:6px 12px;font-size:12px;border:1.5px solid var(--accent);color:var(--accent);">Leave Review</button>` : ''}
+          </div>
+        </div>`).join('');
+
+      list.querySelectorAll('.cancel-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          if (!confirm('Cancel this booking?')) return;
+          try { await apiFetch(`/bookings/${btn.dataset.id}/cancel`, { method: 'PATCH', body: JSON.stringify({ reason: 'Customer requested cancellation' }) }); loadMyBookings(); }
+          catch (err) { alert(err.message); }
+        });
+      });
+      list.querySelectorAll('.pay-now-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentBooking = { bookingId: btn.dataset.id, amount: Number(btn.dataset.amount) };
+          document.getElementById('payAmount').textContent = `Amount due: LKR ${currentBooking.amount.toLocaleString()}`;
+          document.getElementById('bookingStepDates').style.display = 'none';
+          document.getElementById('bookingStepDone').style.display = 'none';
+          document.getElementById('bookingStepPay').style.display = 'block';
+          document.getElementById('payError').style.display = 'none';
+          myBookingsModal.style.display = 'none';
+          bookingModal.style.display = 'flex';
+        });
+      });
+      list.querySelectorAll('.review-btn').forEach(btn => {
+        btn.addEventListener('click', () => openReviewModal(btn.dataset.bookingId));
+      });
+    } catch (err) {
+      list.innerHTML = `<p style="color:#c0392b;">${err.message}</p>`;
+    }
+  }
+
+  document.getElementById('myBookingsLink').addEventListener('click', (e) => {
+    e.preventDefault();
+    if (!getUser()) { authModal.style.display = 'flex'; return; }
+    myBookingsModal.style.display = 'flex';
+    loadMyBookings();
+  });
+
+  // ---------- Reviews ----------
+  const reviewModal = document.getElementById('reviewModal');
+  let reviewBookingId = null;
+  let reviewRating = 5;
+
+  function openReviewModal(bookingId) {
+    reviewBookingId = bookingId;
+    reviewRating = 5;
+    renderStars();
+    document.getElementById('reviewComment').value = '';
+    document.getElementById('reviewError').style.display = 'none';
+    reviewModal.style.display = 'flex';
+  }
+  function renderStars() {
+    document.getElementById('reviewStars').textContent = '★★★★★☆☆☆☆☆'.slice(5 - reviewRating, 10 - reviewRating);
+  }
+  document.getElementById('reviewStars').addEventListener('click', (e) => {
+    const rect = e.target.getBoundingClientRect();
+    const pct = (e.clientX - rect.left) / rect.width;
+    reviewRating = Math.max(1, Math.min(5, Math.ceil(pct * 5)));
+    renderStars();
+  });
+  document.getElementById('reviewModalClose').addEventListener('click', () => reviewModal.style.display = 'none');
+  document.getElementById('reviewSubmit').addEventListener('click', async () => {
+    const errEl = document.getElementById('reviewError');
+    try {
+      await apiFetch('/reviews', {
+        method: 'POST',
+        body: JSON.stringify({
+          bookingId: reviewBookingId,
+          rating: reviewRating,
+          comment: document.getElementById('reviewComment').value
+        })
+      });
+      reviewModal.style.display = 'none';
+      alert('Thanks for your review!');
+    } catch (err) {
+      errEl.textContent = err.message;
+      errEl.style.display = 'block';
+    }
+  });
+
+  // ---------- Mobile hamburger menu ----------
+  const hamburger = document.getElementById('hamburgerBtn');
+  const navLinksEl = document.getElementById('navLinks');
+  function closeMobileMenu() {
+    navLinksEl.classList.remove('open');
+    hamburger.classList.remove('open');
+    hamburger.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+  hamburger.addEventListener('click', () => {
+    const isOpen = navLinksEl.classList.toggle('open');
+    hamburger.classList.toggle('open', isOpen);
+    hamburger.setAttribute('aria-expanded', String(isOpen));
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  });
+  navLinksEl.querySelectorAll('a').forEach(a => {
+    if (a.id !== 'myBookingsLink') a.addEventListener('click', closeMobileMenu);
+  });
+  window.addEventListener('resize', () => { if (window.innerWidth > 980) closeMobileMenu(); });
+
+  // ---------- AI Recommendations (Node -> Java -> Python pipeline) ----------
+  async function loadRecommendations() {
+    const grid = document.getElementById('recommendationsGrid');
+    try {
+      const data = await apiFetch('/ai/recommendations');
+      if (data.data && data.data.length > 0) {
+        grid.innerHTML = data.data.map(vehicleCardHtml).join('');
+        attachBookButtons(grid);
+      } else {
+        document.getElementById('recommendations').style.display = 'none';
+      }
+    } catch (err) {
+      console.warn('Could not load recommendations.', err);
+      document.getElementById('recommendations').style.display = 'none';
+    }
+  }
+
+  // ---------- Init ----------
+  refreshAuthArea();
+  loadVehicles('cars');
+</script>
+
+</body>
+</html>

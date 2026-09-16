@@ -1,0 +1,54 @@
+{
+  "generatedAt": "2026-09-16T06:53:53.667730+00:00",
+  "tasks": [
+    {
+      "task": "Price Prediction",
+      "featureColumns": [
+        "rentalRatePerDay",
+        "rentalDays",
+        "seats"
+      ],
+      "trainingRows": 250,
+      "syntheticRows": 188,
+      "realRows": 62,
+      "models": [
+        {
+          "name": "LinearRegression",
+          "accuracy": 0.8641,
+          "rmse": 28733.77,
+          "status": "compared"
+        },
+        {
+          "name": "RandomForestRegressor",
+          "accuracy": 0.9138,
+          "rmse": 22888.58,
+          "status": "selected"
+        }
+      ],
+      "bestModel": "RandomForestRegressor"
+    },
+    {
+      "task": "Demand Prediction",
+      "featureColumns": [
+        "bookingCount"
+      ],
+      "trainingRows": 92,
+      "models": [
+        {
+          "name": "LinearRegression",
+          "accuracy": 0.9715,
+          "rmse": 0.33,
+          "status": "selected"
+        },
+        {
+          "name": "RandomForestRegressor",
+          "accuracy": 0.8402,
+          "rmse": 0.79,
+          "status": "compared"
+        }
+      ],
+      "bestModel": "LinearRegression",
+      "warning": "Feature is the same-period booking count - see the docstring/comment in build_demand_dataset() before citing this in your report."
+    }
+  ]
+}
